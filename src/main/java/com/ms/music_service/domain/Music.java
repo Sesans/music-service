@@ -25,6 +25,7 @@ public class Music {
     private String genre;
     @Column(length = 10000)
     private String lyrics;
-    @Column(name = "like_count")
-    private int likeCount;
+    @Column(nullable = false)
+    private int likeCount = 0;
+    private int commentCount = 0;
 }

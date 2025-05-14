@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -13,17 +14,17 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_comment")
-public class UserComment {
+@Table(name = "tb_like")
+public class UserLike {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String comment;
+    private LocalDateTime timestamp;
     @ManyToOne
-    @JoinColumn(name = "music_info")
+    @Column(name = "music_id")
     private Integer musicId;
     @Embedded
     @ManyToOne
-    @JoinColumn(name = "user_info")
-    private UserInfo userInfo;
+    @Column(name = "user_id")
+    private UUID userId;
 }

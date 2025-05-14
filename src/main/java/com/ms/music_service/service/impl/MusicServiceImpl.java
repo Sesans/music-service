@@ -1,5 +1,7 @@
 package com.ms.music_service.service.impl;
 
+import com.ms.music_service.domain.Music;
+import com.ms.music_service.dto.MusicRequestDTO;
 import com.ms.music_service.dto.MusicResponseDTO;
 import com.ms.music_service.repository.MusicRepository;
 import com.ms.music_service.service.MusicService;
@@ -28,5 +30,17 @@ public class MusicServiceImpl implements MusicService {
                         music.getLikeCount()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public void publishMusic(MusicRequestDTO musicRequest){
+        Music newMusic = new Music();
+        newMusic.setTitle(musicRequest.title());
+        newMusic.setCompositor(musicRequest.compositor());
+        newMusic.setAlbum(musicRequest.album());
+        newMusic.setGenre(musicRequest.genre());
+        newMusic.setLyrics(musicRequest.lyrics());
+        newMusic.setLikeCount(0);
+        newMusic.setCommentCount(0);
+        musicRepository.save(newMusic);
     }
 }
