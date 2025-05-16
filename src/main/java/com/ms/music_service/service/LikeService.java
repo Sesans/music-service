@@ -1,10 +1,9 @@
 package com.ms.music_service.service;
 
-import org.springframework.stereotype.Service;
+import com.ms.music_service.dto.LikeRequestDTO;
 
 import java.util.UUID;
 
-@Service
 public interface LikeService {
-    void likeMusic(UUID userId, Integer musicId);
+    void likeMusic(LikeRequestDTO likeRequest);
 }

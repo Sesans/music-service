@@ -1,16 +1,17 @@
 package com.ms.music_service.service.impl;
 
 import com.ms.music_service.domain.UserLike;
+import com.ms.music_service.dto.LikeRequestDTO;
 import com.ms.music_service.repository.LikeRepository;
 import com.ms.music_service.repository.MusicRepository;
 import com.ms.music_service.service.LikeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 
+@Service
 public class LikeServiceImpl implements LikeService {
     @Autowired
     LikeRepository likeRepository;
@@ -19,14 +20,14 @@ public class LikeServiceImpl implements LikeService {
 
     @Transactional
     @Override
-    public void likeMusic(UUID userId, Integer musicId){
-        if(!likeRepository.existsByUserIdAndMusicId(userId, musicId)){
+    public void likeMusic(LikeRequestDTO likeRequest){
+        if(!likeRepository.existsByUserIdAndMusicId(likeRequest.userId(), likeRequest.musicId())){
             UserLike like = new UserLike();
             like.setTimestamp(LocalDateTime.now());
-            like.setUserId(userId);
-            like.setMusicId(musicId);
+            like.setUserId(likeRequest.userId());
+            like.setMusicId(likeRequest.musicId());
             likeRepository.save(like);
-            musicRepository.incrementLikeCount(musicId);
+            musicRepository.incrementLikeCount(likeRequest.musicId());
         }
     }
 }
