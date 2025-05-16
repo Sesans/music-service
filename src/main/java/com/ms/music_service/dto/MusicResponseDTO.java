@@ -1,12 +1,13 @@
 package com.ms.music_service.dto;
 
 public record MusicResponseDTO(
-        Integer id,
+        Long id,
         String title,
         String compositor,
         String album,
         String genre,
         String lyrics,
-        int likeCount
+        int likeCount,
+        int commentCount
 ) {
 }

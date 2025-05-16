@@ -5,7 +5,6 @@ public record MusicRequestDTO(
         String compositor,
         String album,
         String genre,
-        String lyrics,
-        int likeCount
+        String lyrics
 ) {
 }

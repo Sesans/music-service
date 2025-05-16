@@ -17,14 +17,11 @@ import java.util.UUID;
 @Table(name = "tb_like")
 public class UserLike {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private LocalDateTime timestamp;
-    @ManyToOne
     @Column(name = "music_id")
-    private Integer musicId;
-    @Embedded
-    @ManyToOne
+    private Long musicId;
     @Column(name = "user_id")
     private UUID userId;
 }

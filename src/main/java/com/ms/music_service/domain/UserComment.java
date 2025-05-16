@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -16,14 +14,11 @@ import java.util.UUID;
 @Table(name = "tb_comment")
 public class UserComment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String comment;
-    @ManyToOne
-    @JoinColumn(name = "music_info")
-    private Integer musicId;
-    @Embedded
-    @ManyToOne
-    @JoinColumn(name = "user_info")
+    @Column(name = "music_id")
+    private Long musicId;
+    @Column(name = "user_info")
     private UserInfo userInfo;
 }
