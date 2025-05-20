@@ -7,6 +7,7 @@ public record MusicResponseDTO(
         String album,
         String genre,
         String lyrics,
+        boolean liked,
         int likeCount,
         int commentCount
 ) {

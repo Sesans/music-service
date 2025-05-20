@@ -25,6 +25,8 @@ public class Music {
     private String genre;
     @Column(length = 10000)
     private String lyrics;
+    @Transient
+    private boolean liked;
     @Column(nullable = false)
     private int likeCount = 0;
     private int commentCount = 0;

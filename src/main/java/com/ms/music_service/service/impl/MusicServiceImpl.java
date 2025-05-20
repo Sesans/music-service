@@ -1,8 +1,10 @@
 package com.ms.music_service.service.impl;
 
+import com.ms.music_service.controller.AuthUtil;
 import com.ms.music_service.domain.Music;
 import com.ms.music_service.dto.MusicRequestDTO;
 import com.ms.music_service.dto.MusicResponseDTO;
+import com.ms.music_service.repository.LikeRepository;
 import com.ms.music_service.repository.MusicRepository;
 import com.ms.music_service.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +17,33 @@ import java.util.stream.Collectors;
 public class MusicServiceImpl implements MusicService {
     @Autowired
     MusicRepository musicRepository;
+    @Autowired
+    LikeRepository likeRepository;
+    @Autowired
+    AuthUtil authUtil;
 
     @Override
     public List<MusicResponseDTO> findAll() {
-        return musicRepository.findAll()
-                .stream()
-                .map(music -> new MusicResponseDTO(
+        List<Music> musicList = musicRepository.findAll();
+        if(authUtil.isAuthenticated()) {
+            for(Music music : musicList){
+                boolean liked = likeRepository.existsByUserIdAndMusicId(authUtil.getCurrentUserId(), music.getId());
+                music.setLiked(liked);
+            }
+        }
+
+        return musicList.stream()
+                .map( music -> new MusicResponseDTO(
                         music.getId(),
                         music.getTitle(),
                         music.getCompositor(),
                         music.getAlbum(),
-                        music.getGenre(),
                         music.getLyrics(),
+                        music.getGenre(),
+                        music.isLiked(),
                         music.getLikeCount(),
                         music.getCommentCount()
-                ))
-                .collect(Collectors.toList());
+                )).collect(Collectors.toList());
     }
 
     public void publishMusic(MusicRequestDTO musicRequest){

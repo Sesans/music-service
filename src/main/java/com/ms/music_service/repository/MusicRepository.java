@@ -12,4 +12,14 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
     @Transactional
     @Query("UPDATE Music m SET m.likeCount = m.likeCount + 1 WHERE m.id = :musicId")
     void incrementLikeCount(@Param("musicId") Long musicId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Music m SET m.likeCount = m.likeCount - 1 WHERE m.id = :musicId")
+    void decrementLikeCount(@Param("musicId") Long musicId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Music m SET m.commentCount = m.commentCount + 1 WHERE m.id = :musicId")
+    void incrementCommentCount(@Param("musicId") Long musicId);
 }
