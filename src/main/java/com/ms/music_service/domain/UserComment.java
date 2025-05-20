@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,5 +22,5 @@ public class UserComment {
     @Column(name = "music_id")
     private Long musicId;
     @Column(name = "user_info")
-    private UserInfo userInfo;
+    private UUID userId;
 }
