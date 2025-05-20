@@ -30,4 +30,13 @@ public class LikeServiceImpl implements LikeService {
             musicRepository.incrementLikeCount(likeRequest.musicId());
         }
     }
+
+    @Override
+    public void dislikeMusic(LikeRequestDTO likeRequest) {
+        UserLike like = likeRepository.findByUserIdAndMusicId(likeRequest.userId(), likeRequest.musicId());
+        if(like != null) {
+            likeRepository.delete(like);
+            musicRepository.decrementLikeCount(likeRequest.musicId());
+        }
+    }
 }
