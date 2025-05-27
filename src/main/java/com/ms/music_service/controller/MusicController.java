@@ -1,8 +1,8 @@
 package com.ms.music_service.controller;
 
-import com.ms.music_service.dto.MusicRequestDTO;
-import com.ms.music_service.dto.MusicResponseDTO;
+import com.ms.music_service.dto.*;
 import com.ms.music_service.service.MusicService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,6 @@ import java.util.List;
 
 @RequestMapping("/music")
 @RestController
-@CrossOrigin(origins = "*", methods = RequestMethod.GET)
 public class MusicController {
     @Autowired
     MusicService musicService;
@@ -21,14 +20,25 @@ public class MusicController {
         return ResponseEntity.status(200).build();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<PagedResponseDTO> getMusicPageable(
+            @RequestParam(defaultValue = "0")int page,
+            @RequestParam(defaultValue = "10")int size,
+            @RequestParam(defaultValue = "LIKE_COUNT") SearchSort sortBy,
+            @RequestParam(defaultValue = "DESC")String direction){
+        return ResponseEntity.ok().body(musicService.pageList(page, size, direction, sortBy));
+    }
+
+    @RolesAllowed("ADMIN")
     @GetMapping("/list")
     public ResponseEntity<List<MusicResponseDTO>> listMusics(){
         return ResponseEntity.status(200).body(musicService.findAll());
     }
 
+    @RolesAllowed("ADMIN")
     @PostMapping("/publish")
     public ResponseEntity<?> publishMusic(@RequestBody MusicRequestDTO dto){
-        musicService.publishMusic(dto);
+        musicService.saveMusic(dto);
         return ResponseEntity.status(200).build();
     }
 }

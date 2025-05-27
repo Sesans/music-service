@@ -1,12 +1,13 @@
 package com.ms.music_service.service;
 
-import com.ms.music_service.dto.MusicRequestDTO;
-import com.ms.music_service.dto.MusicResponseDTO;
+import com.ms.music_service.dto.*;
 
 import java.util.List;
 
 public interface MusicService {
     List<MusicResponseDTO> findAll();
 
-    void publishMusic(MusicRequestDTO dto);
+    void saveMusic(MusicRequestDTO dto);
+
+    PagedResponseDTO pageList(int page, int size, String direction, SearchSort sortBy);
 }

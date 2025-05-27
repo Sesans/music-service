@@ -18,9 +18,9 @@ public class Music {
     private Long id;
     @Column(length = 50, nullable = false)
     private String title;
-    @Column(length = 25)
-    private String compositor;
-    @Column(length = 25)
+    @Column(length = 50)
+    private String artist;
+    @Column(length = 50)
     private String album;
     private String genre;
     @Column(length = 10000)
