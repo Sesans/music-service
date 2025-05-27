@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/likes")
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.OPTIONS, RequestMethod.DELETE, RequestMethod.GET, RequestMethod.POST})
 public class LikeController {
     @Autowired
     AuthUtil authUtil;
