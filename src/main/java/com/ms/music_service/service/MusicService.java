@@ -10,4 +10,6 @@ public interface MusicService {
     void saveMusic(MusicRequestDTO dto);
 
     PagedResponseDTO pageList(int page, int size, String direction, SearchSort sortBy);
+
+    List<MusicSuggestionDTO> autoComplete(String query);
 }

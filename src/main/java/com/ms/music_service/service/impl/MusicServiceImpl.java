@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MusicServiceImpl implements MusicService {
@@ -37,10 +36,20 @@ public class MusicServiceImpl implements MusicService {
                 music.getId(),
                 music.getTitle(),
                 music.getArtist(),
+                music.isLiked(),
                 music.getLikeCount(),
                 music.getCommentCount()
-                )).stream().toList();
+                )).toList();
         return new PagedResponseDTO(musicList, musics.hasNext());
+    }
+
+    @Override
+    public List<MusicSuggestionDTO> autoComplete(String query) {
+        List<Music> musicList = musicRepository.findByTitleOrArtist(query);
+        return musicList.stream().map(music -> new MusicSuggestionDTO(
+                music.getTitle(),
+                music.getArtist()
+        )).toList();
     }
 
     @Override
@@ -54,12 +63,12 @@ public class MusicServiceImpl implements MusicService {
                         music.getTitle(),
                         music.getArtist(),
                         music.getAlbum(),
-                        music.getLyrics(),
                         music.getGenre(),
+                        music.getLyrics(),
                         music.isLiked(),
                         music.getLikeCount(),
                         music.getCommentCount()
-                )).collect(Collectors.toList());
+                )).toList();
     }
 
     public void saveMusic(MusicRequestDTO musicRequest){

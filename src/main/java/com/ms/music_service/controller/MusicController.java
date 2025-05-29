@@ -29,6 +29,11 @@ public class MusicController {
         return ResponseEntity.ok().body(musicService.pageList(page, size, direction, sortBy));
     }
 
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<MusicSuggestionDTO>> autoCompleteUserQuery(@RequestParam String query){
+        return ResponseEntity.ok().body(musicService.autoComplete(query));
+    }
+
     @RolesAllowed("ADMIN")
     @GetMapping("/list")
     public ResponseEntity<List<MusicResponseDTO>> listMusics(){
