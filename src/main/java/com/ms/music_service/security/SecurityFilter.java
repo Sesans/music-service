@@ -7,7 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,22 +27,23 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = recoverToken(request);
-        if(token!=null){
-            try {
+        if(token!=null && !token.isEmpty()){
+            try{
                 DecodedJWT decodedJWT = tokenService.validateAndDecodeToken(token);
-                UUID userId = UUID.fromString(decodedJWT.getSubject());
-                String name = decodedJWT.getClaim("name").asString();
+                if(decodedJWT != null){
+                    UUID userId = UUID.fromString(decodedJWT.getSubject());
+                    String name = decodedJWT.getClaim("name").asString();
 
-                CustomUserDetails userDetails = new CustomUserDetails(userId, name);
-                List<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
-                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                    CustomUserDetails userDetails = new CustomUserDetails(userId, name);
+                    List<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
+                    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }catch (JWTVerificationException exception) {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.getWriter().write("Invalid or expired token");
-                return;
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }catch (JWTVerificationException exception){
+                System.err.println("Token validation failed in filter: " + exception.getMessage());
+                SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request, response);

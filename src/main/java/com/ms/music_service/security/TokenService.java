@@ -20,7 +20,8 @@ public class TokenService {
                     .build()
                     .verify(token);
         }catch (JWTVerificationException exception){
-            throw new RuntimeException("Error validating token!");
+            System.err.println("Token validation failed: " + exception.getMessage());
+            return null;
         }
     }
 }
