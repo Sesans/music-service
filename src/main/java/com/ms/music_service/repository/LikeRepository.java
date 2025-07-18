@@ -9,4 +9,6 @@ public interface LikeRepository extends JpaRepository<UserLike, Long> {
     boolean existsByUserIdAndMusicId(UUID userId, Long musicId);
 
     UserLike findByUserIdAndMusicId(UUID userId, Long musicId);
+
+    boolean existsByUserId(UUID userId);
 }
