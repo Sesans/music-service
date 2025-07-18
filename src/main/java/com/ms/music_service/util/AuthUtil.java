@@ -1,4 +1,4 @@
-package com.ms.music_service.controller;
+package com.ms.music_service.util;
 
 import com.ms.music_service.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;

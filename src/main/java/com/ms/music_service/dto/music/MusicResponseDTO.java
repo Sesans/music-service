@@ -1,9 +1,12 @@
-package com.ms.music_service.dto;
+package com.ms.music_service.dto.music;
 
-public record MusicPageDTO(
+public record MusicResponseDTO(
         Long id,
         String title,
         String artist,
+        String album,
+        String genre,
+        String lyrics,
         boolean liked,
         int likeCount,
         int commentCount

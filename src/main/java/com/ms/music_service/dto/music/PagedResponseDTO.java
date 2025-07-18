@@ -1,4 +1,4 @@
-package com.ms.music_service.dto;
+package com.ms.music_service.dto.music;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package com.ms.music_service.dto;
+package com.ms.music_service.dto.music;
 
 public record MusicRequestDTO(
         String title,
-        String artist,
+        Long artistId,
         String album,
         String genre,
         String lyrics
