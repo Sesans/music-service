@@ -1,23 +1,24 @@
 package com.ms.music_service.controller;
 
-import com.ms.music_service.dto.*;
+import com.ms.music_service.dto.music.*;
 import com.ms.music_service.service.MusicService;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
-@RequestMapping("/music")
+@RequestMapping("/musics")
 @RestController
 public class MusicController {
     @Autowired
     MusicService musicService;
 
     @GetMapping("/{musicId}")
-    public ResponseEntity<?> getMusic(@PathVariable Long musicId){
-        return ResponseEntity.status(200).build();
+    public ResponseEntity<MusicResponseDTO> getMusic(@PathVariable Long musicId){
+        return ResponseEntity.ok(musicService.getSong(musicId));
     }
 
     @GetMapping("/search")
@@ -35,15 +36,17 @@ public class MusicController {
     }
 
     @RolesAllowed("ADMIN")
-    @GetMapping("/list")
+    @GetMapping("/admin/list")
     public ResponseEntity<List<MusicResponseDTO>> listMusics(){
-        return ResponseEntity.status(200).body(musicService.findAll());
+        return ResponseEntity.ok().body(musicService.findAll());
     }
 
     @RolesAllowed("ADMIN")
-    @PostMapping("/publish")
-    public ResponseEntity<?> publishMusic(@RequestBody MusicRequestDTO dto){
-        musicService.saveMusic(dto);
-        return ResponseEntity.status(200).build();
+    @PostMapping("/admin/publish")
+    public ResponseEntity<MusicResponseDTO> publishMusic(@RequestBody MusicRequestDTO dto){
+        MusicResponseDTO responseDTO = musicService.saveMusic(dto);
+        URI location = URI.create("/musics/" + responseDTO.id());
+
+        return ResponseEntity.created(location).body(responseDTO);
     }
 }

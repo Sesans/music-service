@@ -18,8 +18,8 @@ public class Music {
     private Long id;
     @Column(length = 50, nullable = false)
     private String title;
-    @Column(length = 50)
-    private String artist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Artist artist;
     @Column(length = 50)
     private String album;
     private String genre;
@@ -29,5 +29,6 @@ public class Music {
     private boolean liked;
     @Column(nullable = false)
     private int likeCount = 0;
+    @Column(nullable = false)
     private int commentCount = 0;
 }
