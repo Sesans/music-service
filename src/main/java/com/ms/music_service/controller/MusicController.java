@@ -2,12 +2,10 @@ package com.ms.music_service.controller;
 
 import com.ms.music_service.dto.music.*;
 import com.ms.music_service.service.MusicService;
-import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RequestMapping("/musics")
@@ -33,20 +31,5 @@ public class MusicController {
     @GetMapping("/autocomplete")
     public ResponseEntity<List<MusicSuggestionDTO>> autoCompleteUserQuery(@RequestParam String query){
         return ResponseEntity.ok().body(musicService.autoComplete(query));
-    }
-
-    @RolesAllowed("ADMIN")
-    @GetMapping("/admin/list")
-    public ResponseEntity<List<MusicResponseDTO>> listMusics(){
-        return ResponseEntity.ok().body(musicService.findAll());
-    }
-
-    @RolesAllowed("ADMIN")
-    @PostMapping("/admin/publish")
-    public ResponseEntity<MusicResponseDTO> publishMusic(@RequestBody MusicRequestDTO dto){
-        MusicResponseDTO responseDTO = musicService.saveMusic(dto);
-        URI location = URI.create("/musics/" + responseDTO.id());
-
-        return ResponseEntity.created(location).body(responseDTO);
     }
 }

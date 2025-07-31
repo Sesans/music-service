@@ -20,6 +20,7 @@ import org.springframework.data.domain.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +44,7 @@ class MusicServiceImplTest {
     private Artist artist;
     private Music music;
     private Music music2;
+    private UUID userId;
 
     @BeforeEach
     void setUp(){
@@ -70,9 +72,10 @@ class MusicServiceImplTest {
         music2.setAlbum("Album B");
         music2.setGenre("Genre B");
         music2.setLyrics("Lyrics B");
-        music2.setLiked(false);
         music2.setLikeCount(5);
         music2.setCommentCount(1);
+
+        userId = UUID.randomUUID();
     }
 
     @Test
@@ -100,9 +103,9 @@ class MusicServiceImplTest {
         when(musicRepository.findAll(Sort.by(Sort.Direction.DESC, "likeCount")))
         .thenThrow(new RuntimeException("Database error"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            musicService.findAll();
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+            musicService.findAll()
+        );
         assertEquals("Database error", exception.getMessage());
     }
 
@@ -199,20 +202,26 @@ class MusicServiceImplTest {
     }
 
     @Test
-    void getSong_ShouldReturnSongById(){
-        when(musicRepository.findById(music.getId())).thenReturn(Optional.ofNullable(music));
+    void getSong_ShouldReturnSongByIdAndSetLikes(){
+        when(musicRepository.findById(music2.getId())).thenReturn(Optional.ofNullable(music2));
+        when(authUtil.isAuthenticated()).thenReturn(true);
+        when(authUtil.getCurrentUserId()).thenReturn(userId);
+        when(likeRepository.existsByUserIdAndMusicId(userId, music2.getId())).thenReturn(true);
 
-        MusicResponseDTO response = musicService.getSong(music.getId());
+        MusicResponseDTO response = musicService.getSong(music2.getId());
 
-        assertEquals(music.getId(), response.id());
-        assertEquals(music.getTitle(), response.title());
-        assertEquals(music.getArtist().getName(), response.artist());
-        assertEquals(music.getAlbum(), response.album());
-        assertEquals(music.getGenre(), response.genre());
-        assertEquals(music.getLyrics(), response.lyrics());
+        assertNotNull(response);
+        assertEquals(music2.getId(), response.id());
+        assertEquals(music2.getTitle(), response.title());
+        assertEquals(music2.getArtist().getName(), response.artist());
+        assertEquals(music2.getAlbum(), response.album());
+        assertEquals(music2.getGenre(), response.genre());
+        assertEquals(music2.getLyrics(), response.lyrics());
         assertTrue(response.liked());
-        assertEquals(music.getLikeCount(), response.likeCount());
-        assertEquals(music.getCommentCount(), response.commentCount());
+        assertEquals(music2.getLikeCount(), response.likeCount());
+        assertEquals(music2.getCommentCount(), response.commentCount());
+
+        verify(likeRepository, times(1)).existsByUserIdAndMusicId(userId, music2.getId());
     }
 
     @Test

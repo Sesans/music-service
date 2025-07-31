@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,11 +25,28 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/music/**", "/comment/**").permitAll()
-                        .requestMatchers("/likes/**", "/auth/**").authenticated()
-                        .anyRequest().permitAll()
+                        //Public
+                        .requestMatchers(HttpMethod.GET, "/musics/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/musics/*/comments", "/musics/*/annotations", "/musics/search").permitAll()
+
+                        //Authenticated
+                        .requestMatchers(HttpMethod.POST,
+                                "/musics/*/like", "/musics/*/comment", "/musics/*/annotation").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/musics/*/like").authenticated()
+
+                        //Admin
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        //Fallback
+                        .anyRequest().denyAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return new InMemoryUserDetailsManager();
     }
 }
