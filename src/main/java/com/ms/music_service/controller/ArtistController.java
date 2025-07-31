@@ -3,6 +3,7 @@ package com.ms.music_service.controller;
 import com.ms.music_service.dto.ArtistRequestDTO;
 import com.ms.music_service.dto.ArtistResponseDTO;
 import com.ms.music_service.service.ArtistService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class ArtistController {
         return ResponseEntity.ok(artistService.getArtist(artistId));
     }
 
+    @RolesAllowed("ADMIN")
     @PostMapping("/save")
     public ResponseEntity<ArtistResponseDTO> saveArtist(@RequestBody ArtistRequestDTO dto){
         ArtistResponseDTO responseDTO = artistService.saveArtist(dto);

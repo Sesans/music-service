@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RequestMapping("/musics")
 @RestController
 public class LikeController {
@@ -19,7 +21,10 @@ public class LikeController {
     @PostMapping("/{musicId}/like")
     public ResponseEntity<LikeResponseDTO> submitLike(@PathVariable Long musicId){
         LikeRequestDTO likeRequest = new LikeRequestDTO(authUtil.getCurrentUser().getUserId(), musicId);
-        return ResponseEntity.ok(likeService.likeMusic(likeRequest));
+        LikeResponseDTO responseDTO = likeService.likeMusic(likeRequest);
+
+        URI location = URI.create("/musics/" + responseDTO.likeId() + "/like");
+        return ResponseEntity.created(location).body(responseDTO);
     }
 
     @DeleteMapping("/{musicId}/like")

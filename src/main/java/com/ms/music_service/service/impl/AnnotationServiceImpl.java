@@ -61,6 +61,14 @@ public class AnnotationServiceImpl implements AnnotationService {
         userAnnotation.setTimestamp(LocalDateTime.now());
         annotationRepository.save(userAnnotation);
 
-        return new AnnotationResponseDTO(userAnnotation.getId(), userAnnotation.getUserId(), userAnnotation.getMusicId(), userAnnotation.getNote(), userAnnotation.getExcerpt(), userAnnotation.getStartIndex(), userAnnotation.getEndIndex(), userAnnotation.getTimestamp());
+        return new AnnotationResponseDTO(
+                userAnnotation.getId(),
+                userAnnotation.getUserId(),
+                userAnnotation.getMusicId(),
+                userAnnotation.getNote(),
+                userAnnotation.getExcerpt(),
+                userAnnotation.getStartIndex(),
+                userAnnotation.getEndIndex(),
+                userAnnotation.getTimestamp());
     }
 }

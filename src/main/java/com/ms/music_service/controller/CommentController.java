@@ -23,9 +23,9 @@ public class CommentController {
 
     @PostMapping("/{musicId}/comments")
     public ResponseEntity<CommentResponseDTO> publishComment(@PathVariable Long musicId, @RequestBody CommentRequestDTO requestDTO){
-        CommentResponseDTO dto = commentService.submitComment(musicId, requestDTO);
-        URI location = URI.create("/comments/" + dto.commentId());
+        CommentResponseDTO responseDTO = commentService.submitComment(musicId, requestDTO);
+        URI location = URI.create("/comments/" + responseDTO.commentId());
 
-        return ResponseEntity.created(location).body(dto);
+        return ResponseEntity.created(location).body(responseDTO);
     }
 }

@@ -41,6 +41,9 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     @Override
     public void dislikeMusic(LikeRequestDTO likeRequest) {
+        if(!musicRepository.existsById(likeRequest.musicId()))
+            throw new ResourceNotFoundException("There isn't a song with this ID: " + likeRequest.musicId());
+
         UserLike like = likeRepository.findByUserIdAndMusicId(likeRequest.userId(), likeRequest.musicId());
         if(like != null) {
             likeRepository.delete(like);
