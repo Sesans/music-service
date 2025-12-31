@@ -26,13 +26,19 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         //Public
-                        .requestMatchers(HttpMethod.GET, "/musics/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
-                                "/musics/*/comments", "/musics/*/annotations", "/musics/search").permitAll()
+                                "/musics/**",
+                                "/musics/*/comments",
+                                "/musics/*/annotations",
+                                "/musics/search",
+                                "/artists/**",
+                                "/actuator",
+                                "/actuator/health",
+                                "/actuator/prometheus").permitAll()
 
                         //Authenticated
                         .requestMatchers(HttpMethod.POST,
-                                "/musics/*/like", "/musics/*/comment", "/musics/*/annotation").authenticated()
+                                "/musics/*/like", "/musics/*/comments", "/musics/*/annotations").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/musics/*/like").authenticated()
 
                         //Admin

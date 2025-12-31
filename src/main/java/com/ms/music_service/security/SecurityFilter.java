@@ -31,14 +31,18 @@ public class SecurityFilter extends OncePerRequestFilter {
             try{
                 DecodedJWT decodedJWT = tokenService.validateAndDecodeToken(token);
                 if(decodedJWT != null){
-                    UUID userId = UUID.fromString(decodedJWT.getSubject());
+                    String role = decodedJWT.getClaim("role").asString();
                     String name = decodedJWT.getClaim("name").asString();
+                    String userId = decodedJWT.getSubject();
 
-                    CustomUserDetails userDetails = new CustomUserDetails(userId, name);
-                    List<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
-                    authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                    List<GrantedAuthority> authorities = new ArrayList<>();
+                    if (role != null) {
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                    }
 
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                    CustomUserDetails userDetails = new CustomUserDetails(UUID.fromString(userId), name);
+
+                    var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }catch (JWTVerificationException exception){
