@@ -26,7 +26,7 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
     void incrementCommentCount(@Param("musicId") Long musicId);
 
     @Query("SELECT m FROM Music m WHERE LOWER(m.title) LIKE LOWER(CONCAT(:query, '%'))" +
-            " OR LOWER(m.artist) LIKE LOWER(CONCAT(:query, '%'))")
+            " OR LOWER(m.artist.name) LIKE LOWER(CONCAT(:query, '%'))")
     List<Music> findByTitleOrArtist(@Param("query") String query);
 
     boolean existsByTitleAndArtistId(String title, Long artistId);
