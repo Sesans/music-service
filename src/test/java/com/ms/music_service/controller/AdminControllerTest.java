@@ -1,8 +1,11 @@
 package com.ms.music_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ms.music_service.dto.ArtistRequestDTO;
+import com.ms.music_service.dto.ArtistResponseDTO;
 import com.ms.music_service.dto.music.*;
 import com.ms.music_service.security.TokenService;
+import com.ms.music_service.service.ArtistService;
 import com.ms.music_service.service.MusicService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +24,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminController.class)
 @AutoConfigureMockMvc
@@ -31,18 +33,24 @@ class AdminControllerTest {
     MockMvc mockMvc;
 
     @MockBean
+    ArtistService artistService;
+    @MockBean
     MusicService musicService;
     @MockBean
     TokenService tokenService;
 
     private MusicResponseDTO responseDTO;
     private MusicRequestDTO requestDTO;
+    private ArtistResponseDTO artistResponseDTO;
+    private Long artistId;
 
     @BeforeEach
     void setUp(){
         Long musicId = 1L;
-        requestDTO = new MusicRequestDTO("Song title", 1L, "Request Album", "Request Genre", "Request Lyrics");
+        artistId = 1L;
+        requestDTO = new MusicRequestDTO("Song title", artistId, "Request Album", "Request Genre", "Request Lyrics");
         responseDTO = new MusicResponseDTO(musicId, "Title", "Artist", "Album", "Rock", "Lyrics", false, 0, 0);
+        artistResponseDTO = new ArtistResponseDTO(artistId, "Artist name");
     }
 
     @Test
@@ -62,7 +70,7 @@ class AdminControllerTest {
         final ObjectMapper objectMapper = new ObjectMapper();
         when(musicService.saveMusic(any(MusicRequestDTO.class))).thenReturn(responseDTO);
 
-        mockMvc.perform(post("/admin/publish")
+        mockMvc.perform(post("/admin/publish/music")
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(requestDTO))
@@ -70,5 +78,21 @@ class AdminControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.title").value("Title"));
+    }
+
+    @Test
+    void saveArtist_ShouldReturnCreatedWithJson() throws Exception{
+        final ObjectMapper objectMapper = new ObjectMapper();
+        when(artistService.saveArtist(any(ArtistRequestDTO.class))).thenReturn(artistResponseDTO);
+
+        mockMvc.perform(post("/admin/publish/artist")
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(requestDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Artist name"));
     }
 }
